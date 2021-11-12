@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Category } from 'src/app/models/category';
@@ -10,7 +10,7 @@ import { CategoriesService } from 'src/app/services/categories.service';
   templateUrl: './add-or-edit-product-modal.component.html',
   styleUrls: ['./add-or-edit-product-modal.component.scss']
 })
-export class AddOrEditProductModalComponent implements OnInit, OnDestroy {
+export class AddOrEditProductModalComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() product: Product;
   @Output() finish = new EventEmitter();
@@ -18,6 +18,7 @@ export class AddOrEditProductModalComponent implements OnInit, OnDestroy {
   categories: Category[];
   categorySubscription: Subscription;
   idCategory: number = 1;
+  file: File;
 
   constructor(private formBuilder: FormBuilder, private categoryService: CategoriesService) {
     this.productForm = formBuilder.group({
@@ -38,7 +39,24 @@ export class AddOrEditProductModalComponent implements OnInit, OnDestroy {
    }
 
    get isIllustrationInvalid(): boolean {
+    if(this.product) {
+      return false;
+    }
+
     return this.productForm.get('illustration')!.invalid;
+   }
+
+   updateForm(product: Product) {
+     this.productForm.patchValue({
+      productInfos: {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        stock: product.stock
+      }
+     });
+     product.oldImage = product.image;
+     this.selectCategory(product.Category);
    }
 
    handleCancel() {
@@ -53,13 +71,23 @@ export class AddOrEditProductModalComponent implements OnInit, OnDestroy {
       category: this.idCategory
     }
 
-    this.finish.emit(product);
+    if(this.file) {
+      product.image = this.file.name;
+    } else {
+      product.image = this.product.oldImage;
+    }
+
+    this.finish.emit({product: product, file: (this.file ? this.file : null)});
     this.close();
    }
 
    close(): void {
     this.productForm.reset();
     this.idCategory = 1;
+   }
+
+   detectFile(image): void {
+    this.file = image.target.files[0];
    }
 
    selectCategory(id: number) {
@@ -79,5 +107,12 @@ export class AddOrEditProductModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.categorySubscription.unsubscribe();
+  }
+
+  ngOnChanges(): void {
+    if(this.product) {
+      // edit product
+      this.updateForm(this.product);
+    }
   }
 }

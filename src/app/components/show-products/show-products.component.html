@@ -12,11 +12,12 @@
 <!-- End Modal Delete -->
 
 <clr-datagrid>
-  <clr-dg-column>ID Produit</clr-dg-column>
-  <clr-dg-column>Nom</clr-dg-column>
-  <clr-dg-column>Description</clr-dg-column>
+  <clr-dg-column [style.width.px]="50">ID Produit</clr-dg-column>
+  <clr-dg-column [style.width.px]="100">Nom</clr-dg-column>
+  <clr-dg-column [style.width.px]="400">Description</clr-dg-column>
   <clr-dg-column>Prix</clr-dg-column>
   <clr-dg-column>Stock</clr-dg-column>
+  <clr-dg-column [style.width.px]="50">Image</clr-dg-column>
 
   <clr-dg-row *clrDgItems="let product of products">
 
@@ -32,6 +33,7 @@
     <clr-dg-cell>{{product.description}}</clr-dg-cell>
     <clr-dg-cell>{{product.price}} €</clr-dg-cell>
     <clr-dg-cell>{{product.stock}}</clr-dg-cell>
+    <clr-dg-cell><img [src]="baseUrlImage+product.image" [alt]="product.name"  [style.width.px]="50"></clr-dg-cell>
   </clr-dg-row>
 
   <clr-dg-footer>

@@ -3,8 +3,9 @@ export interface Product {
   name: string,
   description: string,
   image: string,
+  oldImage: string,
   price: number,
   stock: number,
-  category: string,
+  Category: number,
   createdAt: string
 }
