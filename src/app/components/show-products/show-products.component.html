@@ -8,7 +8,12 @@
 <!-- End Modal Add or Edit -->
 
 <!-- Modal Delete -->
-
+<app-delete-product-modal
+*ngIf="delete"
+[product]="productToBeDelete"
+ (cancel)="handleCancelDelete()"
+ (confirm)="handleConfirmDelete()">
+</app-delete-product-modal>
 <!-- End Modal Delete -->
 
 <clr-datagrid>
